@@ -78,19 +78,33 @@ Uvicorn – ASGI server
 Project Structure
 clinical-summary-generator/
 ├── data/
+
 │   ├── diagnoses.csv
+
 │   ├── medications.csv
+
 │   ├── vitals.csv
+
 │   ├── notes.csv
+
 │   ├── wounds.csv
+
 │   └── oasis.csv
+
 ├── src/
+
 │   ├── data_layer.py
+
 │   └── llm_service.py
+
 ├── app.py              # Streamlit frontend
+
 ├── main.py             # FastAPI backend
+
 ├── requirements.txt
+
 ├── .env.example
+
 └── README.md
 
 Installation & Setup
@@ -145,8 +159,10 @@ POST /generate_summary
 Request Body
 
 {
+
   "patient_id": 1001,
   "include_citations": true
+  
 }
 
 Clinical Summary Content
@@ -182,14 +198,3 @@ Usable and intuitive interface
 
 Data-grounded LLM responses
 
-Notes
-
-This project is intended for educational and assessment purposes
-
-No real patient data is used
-
-The CSV files simulate an EHR database
-
-Align it with a grading rubric
-
-Remove LLM branding for neutrality
