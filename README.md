@@ -1,135 +1,79 @@
 Clinical Summary Generator
-Objective
+Overview
 
-Build a Clinical Summary Generator application that ingests patient data from CSV files and uses a Large Language Model (LLM) to generate a structured, evidence-based clinical summary for home health patients.
+The Clinical Summary Generator is a Python-based application that generates concise, evidence-based clinical summaries for home health patients.
+It simulates a simplified Electronic Health Record (EHR) system using CSV files and leverages a Large Language Model (LLM) to transform raw patient data into a structured clinical narrative.
 
-Project Overview
+The project includes:
 
-This project simulates a simplified Electronic Health Record (EHR) system using CSV files.
-The application allows a user to select a patient and automatically generate a concise clinical summary by aggregating diagnoses, medications, vitals, wounds, clinical notes, and functional status data.
-
-The system consists of:
-
-A data ingestion layer that reads CSV files
-
-A backend API that prepares patient context and communicates with an LLM
+A FastAPI backend for summary generation
 
 A Streamlit frontend for user interaction
 
-Data Sources
+A CSV-based data layer representing EHR tables
 
-All patient data is stored as CSV files in the data/ directory.
-Each CSV represents a table in a relational database.
+Objective
 
-diagnoses.csv – Patient diagnoses
+To build a system that:
 
-medications.csv – Medication list and adherence
+Ingests patient data from multiple CSV files
 
-vitals.csv – Vital sign measurements over time
+Aggregates data by patient_id
 
-notes.csv – Clinical notes
+Uses an LLM to generate a clinician-style summary
 
-wounds.csv – Active and historical wound data
-
-oasis.csv – Functional status and OASIS assessment data
-
-All data is filtered using patient_id.
-
-Core Functionality
-Clinical Summary Generation
-
-The system generates a clinical summary for a given patient by following these steps:
-
-Accept a patient_id as input
-
-Retrieve all related patient data from the CSV files
-
-Format the data into a structured context
-
-Send the context to an LLM
-
-Receive a concise, clinician-style summary
-
-The generated summary focuses on:
-
-Primary diagnoses
-
-Recent vital sign trends
-
-Active wounds (if any)
-
-Medication usage or changes
-
-Functional status based on OASIS data
-
-Access Points
-A. Backend API
-
-A Python-based API (FastAPI or Flask) exposes the core functionality.
-
-Endpoint
-
-POST /generate_summary
-
-
-Input
-
-{
-  "patient_id": 1001
-}
-
-
-Output
-
-Generated clinical summary (text or structured JSON)
-
-B. Frontend UI
-
-A simple Streamlit application provides an easy-to-use interface.
+Optionally includes citations for data traceability
 
 Features
 
-Input field for patient_id
+Patient-level data filtering using patient_id
 
-“Generate Summary” button
+Structured clinical summaries
 
-Display of the generated clinical summary
+REST API for summary generation
 
-Optional display of citations
+Streamlit UI for easy usage
 
-LLM Integration
+Evidence-based summaries with optional citations
 
-The LLM is instructed to act as a home health clinician.
+Modular design (Data Layer, API, UI, LLM)
 
-Prompt Goals
+Data Sources
 
-Produce a clear, professional clinical narrative
+All patient data is stored in the data/ directory as CSV files:
 
-Use only the provided patient data
+File	Description
+diagnoses.csv	Patient diagnoses
+medications.csv	Medication details
+vitals.csv	Vital sign history
+notes.csv	Clinical notes
+wounds.csv	Wound assessments
+oasis.csv	Functional status (OASIS)
 
-Avoid assumptions or hallucinations
+Each file is queried using patient_id.
 
-Maintain a clinical tone suitable for care documentation
+System Architecture
+Streamlit UI
+     |
+FastAPI Backend
+     |
+Data Layer (CSV Files)
+     |
+LLM (Clinical Summary Generation)
 
-Bonus: Citations & Evidence (Optional Enhancement)
-Requirement
+Tech Stack
 
-Each clinical statement should be verifiable.
+Python 3.8+
 
-Implementation
+FastAPI – Backend API
 
-The LLM is instructed to cite the source CSV and date for each claim
+Streamlit – Frontend UI
 
-Example:
+Pandas – Data processing
 
-“Blood pressure remains elevated at 145/88 on 2023-10-01
-[Source: vitals.csv]”
+Google Gemini / OpenAI – LLM integration
 
-Advanced Option
-
-Return structured JSON linking each sentence to its source data
-
-Display citations clearly in the UI
+Uvicorn – ASGI server
 
 Project Structure
 clinical-summary-generator/
@@ -140,45 +84,112 @@ clinical-summary-generator/
 │   ├── notes.csv
 │   ├── wounds.csv
 │   └── oasis.csv
+├── src/
+│   ├── data_layer.py
+│   └── llm_service.py
 ├── app.py              # Streamlit frontend
-├── main.py             # API backend
-├── requirements.txt    # Python dependencies
-└── README.md           # Project documentation
+├── main.py             # FastAPI backend
+├── requirements.txt
+├── .env.example
+└── README.md
 
-Getting Started
-1. Set Up Environment
+Installation & Setup
+1. Create Virtual Environment
 python -m venv venv
-source venv/bin/activate   # macOS/Linux
-venv\Scripts\activate      # Windows
+source venv/bin/activate      # macOS/Linux
+venv\Scripts\activate         # Windows
+
+2. Install Dependencies
 pip install -r requirements.txt
 
-2. Run Backend API
+3. Configure Environment Variables
+cp .env.example .env
+
+
+Add your LLM API key in .env:
+
+GEMINI_API_KEY=your_api_key_here
+# Optional
+OPENAI_API_KEY=your_openai_key_here
+
+Running the Application
+Start Backend API
 python main.py
 
-3. Run Frontend
+
+API will be available at:
+
+http://localhost:8000
+
+Docs: http://localhost:8000/docs
+
+Start Frontend UI
 streamlit run app.py
 
-Deliverables
 
-app.py – Streamlit frontend
+UI will open at:
 
-main.py – API backend (or unified structure)
+http://localhost:8501
 
-requirements.txt
+API Endpoints
+Health Check
+GET /health
 
-README.md – Instructions and project explanation
+List Patients
+GET /patients
 
-Evaluation Criteria
+Generate Clinical Summary
+POST /generate_summary
 
-Code Quality – Clean, readable, well-structured
 
-System Design – Clear separation of data, logic, and UI
+Request Body
 
-Prompt Engineering – Effective handling of raw clinical data
+{
+  "patient_id": 1001,
+  "include_citations": true
+}
 
-User Experience – Simple and intuitive interface
+Clinical Summary Content
+
+The generated summary focuses on:
+
+Primary diagnoses
+
+Recent vital sign trends
+
+Active wounds
+
+Medications and adherence
+
+Functional status (OASIS)
+
+When enabled, each statement includes citations referencing the source CSV file and date.
+
+Example Output
+Patient presents with chronic pressure ulcers and requires assistance
+with activities of daily living. Recent vital signs remain stable.
+[Source: vitals.csv, oasis.csv]
+
+Evaluation Focus
+
+Code quality and organization
+
+Clear separation of concerns
+
+Effective prompt engineering
+
+Usable and intuitive interface
+
+Data-grounded LLM responses
 
 Notes
 
-This project is designed as a clinical data engineering and LLM integration exercise.
-The focus is on data grounding, clarity, and trustworthiness rather than visual complexity.
+This project is intended for educational and assessment purposes
+
+No real patient data is used
+
+The CSV files simulate an EHR database
+
+Align it with a grading rubric
+
+Remove LLM branding for neutrality
