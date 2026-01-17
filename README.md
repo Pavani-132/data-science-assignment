@@ -1,8 +1,4 @@
-Got it 👍
-Below is a **clean, professional GitHub-ready README.md** tailored **exactly to your project files (`main.py`, `app.py`, `requirements.txt`, `.env.example`)** and aligned with the assignment description.
-You can **copy-paste this directly into your GitHub README.md**.
 
----
 
 # Clinical Summary Generator
 
